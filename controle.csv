@@ -1,0 +1,7 @@
+ControleName,Command,Expected
+access,uname,Linux
+sudo,sudo whoami,root
+hostName,hostname,LIN-SRV
+dnsutils,  sudo apt show dnsutils | grep Installed, yes
+user1,id user1,uid
+user2,id user2,uid
