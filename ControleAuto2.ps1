@@ -1,5 +1,6 @@
-﻿# Script contrôle sur OS Linux Debian dans via SSH
-# Pour sudo sans mot de passe :  "sudo visudo"  ajouter  "prof ALL=(ALL) NOPASSWD: ALL"
+﻿# Script contrôle sur OS Linux Debian dans VM via SSH
+# Pour sudo sans mot de passe, ajouter  "prof ALL=(ALL) NOPASSWD: ALL" dans  "sudo nano visudo"
+
 
 # Variables
 $remoteUser ="prof" #"utilisateur" #
@@ -8,33 +9,28 @@ $privateKeyPath = "C:\Path\To\Your\PrivateKey"
 $PasswordSecur = ConvertTo-SecureString $password -AsPlainText -Force
 $Creds = New-Object System.Management.Automation.PSCredential ($remoteUser , $PasswordSecur)
 
-$timeout =40 # Timeout de connexion
+$timeout =40 # Timeout d'ouverture de session ssh en secondes
 $intervalSeconds = 10  # Intervalle entre chaque itération en secondes
-
-#Liste des Machine à controler
-$remoteHosts = @("192.168.1.100","192.168.1.38","192.168.1.39")
-# Importer le module Posh-SSH
-
 
 # Liste VM
 $VM = @()
 
-
+clear
+Write-Host "               Controle LINUX" -ForegroundColor Cyan
 
 # Créer le dossier s'il n'existe pas
-if (-not (Test-Path $ModulePath)) {
-    New-Item -ItemType Directory -Path $ModulePath -Force
-}
-
+#if (-not (Test-Path $ModulePath)) {
+#    New-Item -ItemType Directory -Path $ModulePath -Force
+#}
 # Ajouter le chemin aux modules PowerShell
-$env:PSModulePath = "$ModulePath;$env:PSModulePath"
-$FilteredPaths = $CurrentPaths | Where-Object {$_ -notmatch "OneDrive"}
+#$env:PSModulePath = "$ModulePath;$env:PSModulePath"
+#$FilteredPaths = $CurrentPaths | Where-Object {$_ -notmatch "OneDrive"}
 # Réappliquer les nouveaux chemins sans OneDrive
-$env:PSModulePath = $FilteredPaths -join ";"
+#$env:PSModulePath = $FilteredPaths -join ";"
 
 # Vérifier si le module Posh-SSH est installé
 if (-not (Get-Module -ListAvailable -Name Posh-SSH)) {
-    Write-Host "Le module Posh-SSH n'est pas installé. Installation en cours..." -ForegroundColor Yellow
+    Write-Host "❌ Le module Posh-SSH n'est pas installé. Installation en cours..." -ForegroundColor Yellow
     
     # Installer le module
     try {
@@ -45,18 +41,18 @@ if (-not (Get-Module -ListAvailable -Name Posh-SSH)) {
     
         #Install-Module -Name Posh-SSH -Force -Scope CurrentUser -Repository PSGallery -SkipPublisherCheck -Des $ModulePath
 
-        Write-Host "Installation réussie !" -ForegroundColor Green
+        Write-Host "✅ Installation réussie !" -ForegroundColor Green
     } catch {
-        Write-Host "Erreur lors de l'installation de Posh-SSH : $_" -ForegroundColor Red
+        Write-Host "❌ Erreur lors de l'installation de Posh-SSH : $_" -ForegroundColor Red
         exit 1
     }
 } else {
-    Write-Host "Le module Posh-SSH est déjà installé." -ForegroundColor Green
+    Write-Host "✅ Le module Posh-SSH est déjà installé." -ForegroundColor Cyan
 }
 
 # Importer le module dans la session actuelle
 Import-Module Posh-SSH -ErrorAction Stop
-Write-Host "Module Posh-SSH chargé avec succès." -ForegroundColor Cyan
+Write-Host "✅ Module Posh-SSH chargé avec succès." -ForegroundColor Green
 
 
 
@@ -290,12 +286,37 @@ while ($true) {
 
     # Afficher les résultats sous forme de tableau
     clear
-    $VM | Format-Table -AutoSize 
+ 
+function Show-SplitTable {
+    param (
+        [Parameter(Mandatory = $true)] [array]$data,
+        [int]$columnsPerTable = 3
+    )
 
+    $colNames = $data[0].PSObject.Properties.Name  # Récupère les noms des colonnes
+    $firstCol = $colNames[1]  # Garder la colonne 2
+    $otherCols = $colNames[2..($colNames.Count - 1)]  # Toutes les autres colonnes
+
+    for ($i = 0; $i -lt $otherCols.Count; $i += $columnsPerTable) {
+        $part = $otherCols[$i..([math]::Min($i + $columnsPerTable - 1, $otherCols.Count - 1))]
+
+        # Toujours inclure la colonne 2
+        $selectedCols = @($firstCol) + $part  
+
+        $data | Select-Object $selectedCols | Format-Table -AutoSize
+    }
+}
+
+# Exemple d'utilisation :
+Show-SplitTable -data $VM -columnsPerTable 10
 
 
     Start-Sleep -Seconds $intervalSeconds
 }
+
+
+
+
 
 # Fermer toutes les sessions SSH
 $sshSessions | ForEach-Object { Remove-SSHSession -SSHSession $_ }

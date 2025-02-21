@@ -1,7 +1,10 @@
 ControleName,Command,Expected
-access,uname,Linux
-sudo,sudo whoami,root
-hostName,hostname,LIN-SRV
+access,echo "$(uname)$(sudo whoami)",Linuxroot
+hostName,echo "$(hostname)$(ping -c 1 LIN-SRV 2>/dev/null|grep received)",LIN-SRV1
+admin,id admin,uid
+admin-sudo,groups admin,sudo
 dnsutils,  sudo apt show dnsutils | grep Installed, yes
-user1,id user1,uid
+nslog,sudo cat /home/admin/ns.log|grep Server,8.8.8.8
 user2,id user2,uid
+user3,id user1,uid"
+user4,id user2,uid
