@@ -2,9 +2,12 @@ ControleName,Command,Expected
 access,echo "$(uname)$(sudo whoami)",Linuxroot
 hostName,echo "$(hostname)$(ping -c 1 LIN-SRV 2>/dev/null|grep received)",LIN-SRV1
 admin,id admin,uid
-admin-sudo,groups admin,sudo
-dnsutils,  sudo apt show dnsutils | grep Installed, yes
+sudo,groups admin,sudo
+banner, echo "$(grep banner.txt /etc/ssh/sshd_config|cut -d ' ' -f1)$(sudo cat /home/admin/banner.txt)",BannerAccès restreint aux personnes autorisées CIEL.branly
+man,sudo apt show man-db|grep Installed,yes
+dnsutils,sudo apt show dnsutils|grep Installed,yes
 nslog,sudo cat /home/admin/ns.log|grep Server,8.8.8.8
-user2,id user2,uid
+grp,sudo cut -d: -f1 /etc/group | grep -E "Informatique|Direction|Finances" | sort | paste -sd "",DirectionFinancesInformatique
+user,echo "$(id averse 2>/dev/null | grep -o Informatique)$(id aversaire 2>/dev/null | grep -o Direction)$(id gmenvussa 2>/dev/null | grep -o Finances)$(id gdon 2>/dev/null | grep -o Finances)",InformatiqueDirectionFinancesFinances
 user3,id user1,uid"
 user4,id user2,uid
