@@ -247,7 +247,7 @@ while ($true) {
        if ($VM[$i].connect.Connected)
         {
 
-        Write-Host "Executing tests on host: $($VM[$i].connect.Host)"
+        Write-Host "Executing tests on host: $($VM[$i].connect.Host) $($VM[$i].nom)"
 
         $testResults = Execute-Tests -session $VM[$i].connect
 
