@@ -1,7 +1,10 @@
 # Evaluation automatique administration système Linux
-Lycée Branly Lyon
-Version 2025
-## Configuration de VM
-Compte prof mdp frop
-Dans c:/etc/sudoers   ajout de : prof ALL=(ALL) NOPASSWD: ALL
-Pour config DNS ??? : echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
+Lycée Branly Lyon\
+Version 2025\
+SD
+## Configuration des VM
+OS Debian minimal avec serveur SSH configurer pour le contrôle\  
+Compte pour le contrôle : prof mdp frop\ 
+Authorisation d'utiliser sudo sans rentrer le mdp :\   
+c:/etc/sudoers   ajouter : prof ALL=(ALL) NOPASSWD: ALL
+## 
