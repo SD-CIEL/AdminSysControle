@@ -292,6 +292,9 @@ function Show-SplitTable {
         [Parameter(Mandatory = $true)] [array]$data,
         [int]$columnsPerTable = 3
     )
+  $windowWidth = [System.Console]::WindowWidth
+Write-Host "Largeur de la fenêtre : $windowWidth"
+
 
     $colNames = $data[0].PSObject.Properties.Name  # Récupère les noms des colonnes
     $firstCol = $colNames[1]  # Garder la colonne 2
@@ -303,12 +306,12 @@ function Show-SplitTable {
         # Toujours inclure la colonne 2
         $selectedCols = @($firstCol) + $part  
 
-        $data | Select-Object $selectedCols | Format-Table -AutoSize
+        $data | Select-Object $selectedCols | Format-Table -Property * -AutoSize #| Format-Table -AutoSize |  Out-String -Width $windowWidth
     }
 }
 
-# Exemple d'utilisation :
-Show-SplitTable -data $VM -columnsPerTable 10
+
+    Show-SplitTable -data $VM -columnsPerTable 12
 
 
     Start-Sleep -Seconds $intervalSeconds
