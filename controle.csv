@@ -13,3 +13,8 @@ share,sudo ls -la /home/budget/|grep Finances|cut -d' ' -f1,d---rwx---
 file,sudo ls -la /home/budget/factures.txt|grep Finances|cut -d' ' -f1,-rw-rw----
 script,sudo echo "$(sudo ls -l /home/admin/logusers.sh | grep -o rwx)$(sudo cat /home/admin/logusers.sh|grep -o /bin/bash)$(sudo cat /home/admin/logusers.sh|grep -o date)$(sudo cat /home/admin/logusers.sh|grep -o who)"$(sudo ls /home/admin/users.log|cut -d/ -f4)"",rwx/bin/bashdatewhousers.log
 cron,echo "$(sudo grep -o "gdon" /home/admin/users.log | wc -l | awk '$1 > 3 {print "OK"}')$(sudo grep -o "averse" /home/admin/users.log | wc -l | awk '$1 > 3 {print "OK"}')$(sudo cat /var/spool/cron/crontabs/root | grep -o /2)",OKOK/2
+smbd,echo "$(sudo systemctl status smbd | grep -o running)",running
+samba,echo "$(sudo pdbedit -L | grep -o gdon)",gdon
+prog,sudo ls -l /home/averse/prog/a.out | grep -o rwx,rwx
+git,sudo git --git-dir=/home/averse/prog/.git log | grep -o first,first
+score,echo "$(sudo cat /home/averse/prog/devine.c | grep -o score | wc -w)$(sudo git --git-dir=/home/averse/prog/.git log | grep -o score)",score
