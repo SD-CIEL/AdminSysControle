@@ -1,5 +1,6 @@
 ﻿# Script contrôle sur OS Linux Debian dans VM via SSH
-# Pour sudo sans mot de passe, ajouter  "prof ALL=(ALL) NOPASSWD: ALL" dans  "sudo nano visudo"
+# SD 2025
+# Pour sudo sans mot de passe, il faut ajouter  "prof ALL=(ALL) NOPASSWD: ALL" dans  "sudo nano visudo"
 
 
 # Variables
@@ -315,6 +316,18 @@ Write-Host "Largeur de la fenêtre : $windowWidth"
 
 
     Start-Sleep -Seconds $intervalSeconds
+
+
+    # Générer un timestamp au format YYYY-MM-DD_HH-mm-ss
+    $timestamp = Get-Date -Format "yyyy-MM-dd_HH"
+
+    # Définir le nom du fichier avec la date et l'heure
+    $filename = "resultats_$timestamp.csv"
+
+    # Exporter le tableau en CSV
+    $filenamepath = Join-Path $scriptPath $filename
+    $VM | Export-Csv -Path $filenamepath -NoTypeInformation -Encoding UTF8 -Force
+
 }
 
 
