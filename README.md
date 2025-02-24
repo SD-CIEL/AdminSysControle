@@ -10,4 +10,4 @@ c:/etc/sudoers   ajouter : prof ALL=(ALL) NOPASSWD: ALL
 ## Fichiers utilisés :
 - IPEtudiant.csv : liste des IP des VM et le nom de l'étudiant
 - controle.csv : liste des controles : nom du controle, commande bash et résultat attendu
-- resultats.csv : liste des résultats obtenues pour chaque VM/étudiant.
+- resultats.csv : liste des résultats obtenues pour chaque VM/étudiant. Fichier horodaté toutes les heures.
