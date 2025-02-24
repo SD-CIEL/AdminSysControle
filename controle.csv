@@ -18,3 +18,4 @@ samba,echo "$(sudo pdbedit -L | grep -o gdon)",gdon
 prog,sudo ls -l /home/averse/prog/a.out | grep -o rwx,rwx
 git,sudo git --git-dir=/home/averse/prog/.git log | grep -o first,first
 score,echo "$(sudo cat /home/averse/prog/devine.c | grep -o score | wc -w)$(sudo git --git-dir=/home/averse/prog/.git log | grep -o score)",score
+github,sudo git --git-dir=/home/averse/prog/.git remote -v |grep -o devinette.git,devinette.git
