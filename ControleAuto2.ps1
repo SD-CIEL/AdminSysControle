@@ -197,7 +197,7 @@ function Reconnect {
     {
        Write-Host "   ✅ " $vm[$i].ip "ping OK" -ForegroundColor Green
        $vm[$i].ping=$true
-       $session = New-SSHSession -ComputerName $vm[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout #2>$null
+       $session = New-SSHSession -ComputerName $vm[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout 2>$null
        $VM[$i].connect=$session
        if ($session.Connected) {
             Write-Host "   ✅ " $vm[$i].ip "session établie"  -ForegroundColor Green
