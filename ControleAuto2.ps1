@@ -6,7 +6,7 @@
 # Variables
 $remoteUser ="prof" #"utilisateur" #
 $password = "frop"#"didalab" #
-$privateKeyPath = "C:\Path\To\Your\PrivateKey"
+#$privateKeyPath = "C:\Path\To\Your\PrivateKey"
 $PasswordSecur = ConvertTo-SecureString $password -AsPlainText -Force
 $Creds = New-Object System.Management.Automation.PSCredential ($remoteUser , $PasswordSecur)
 
@@ -130,7 +130,12 @@ foreach ($row in $data) {
 
 }
 
-
+#Effacer les clés des sessions enregistrées sur les Ip
+$jobs = @()
+foreach ($item in $VM) {
+    Write-Host "Suppresion clé session" $item.iP -ForegroundColor Green
+    Remove-SSHTrustedHost -HostName $item.iP
+}
 
 
 #Test initial de connectivité PING
@@ -192,7 +197,7 @@ function Reconnect {
     {
        Write-Host "   ✅ " $vm[$i].ip "ping OK" -ForegroundColor Green
        $vm[$i].ping=$true
-       $session = New-SSHSession -ComputerName $vm[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout 2>$null
+       $session = New-SSHSession -ComputerName $vm[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout #2>$null
        $VM[$i].connect=$session
        if ($session.Connected) {
             Write-Host "   ✅ " $vm[$i].ip "session établie"  -ForegroundColor Green
