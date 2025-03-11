@@ -5,7 +5,7 @@ SD
 ## Configuration des VM
 OS Debian minimal avec serveur SSH configuré pour le contrôle\  
 Compte pour le contrôle : login **prof** mdp **frop**  
-Authoriser sudo pour prof sans rentrer le mdp en ajoutant dans /etc/sudoers : 
+Authoriser sudo pour prof sans rentrer le mdp en ajoutant dans /etc/sudoers, avec la commande visudo: 
   ```bash
 prof ALL=(ALL) NOPASSWD: ALL
 ```
