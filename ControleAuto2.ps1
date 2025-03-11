@@ -164,7 +164,7 @@ for ($i = 0; $i -lt $VM.Count; $i++)
  {
     if ($VM[$i].ping)
     {
-        $session = New-SSHSession -ComputerName $VM[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout
+        $session = New-SSHSession -ComputerName $VM[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout  2>$null
         $VM[$i].connect=$session
 
         if ($session.Connected) {
@@ -192,7 +192,7 @@ function Reconnect {
     {
        Write-Host "   ✅ " $vm[$i].ip "ping OK" -ForegroundColor Green
        $vm[$i].ping=$true
-       $session = New-SSHSession -ComputerName $vm[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout
+       $session = New-SSHSession -ComputerName $vm[$i].ip -Credential $Creds -AcceptKey -ConnectionTimeout $timeout 2>$null
        $VM[$i].connect=$session
        if ($session.Connected) {
             Write-Host "   ✅ " $vm[$i].ip "session établie"  -ForegroundColor Green
@@ -311,23 +311,21 @@ Write-Host "Largeur de la fenêtre : $windowWidth"
     }
 }
 
-
+    # Afficher les résultats
     Show-SplitTable -data $VM -columnsPerTable 12
 
-
-    Start-Sleep -Seconds $intervalSeconds
-
-
+    # Sauvegarde des résultats
     # Générer un timestamp au format YYYY-MM-DD_HH-mm-ss
     $timestamp = Get-Date -Format "yyyy-MM-dd_HH"
-
     # Définir le nom du fichier avec la date et l'heure
     $filename = "resultats_$timestamp.csv"
-
     # Exporter le tableau en CSV
     $filenamepath = Join-Path $scriptPath $filename
     $VM | Export-Csv -Path $filenamepath -NoTypeInformation -Encoding UTF8 -Force
 
+
+    # Temporisation affichage réultats 
+    Start-Sleep -Seconds $intervalSeconds
 }
 
 
