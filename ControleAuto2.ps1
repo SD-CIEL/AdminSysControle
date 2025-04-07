@@ -3,7 +3,9 @@
 # Pour sudo sans mot de passe, il faut ajouter  "prof ALL=(ALL) NOPASSWD: ALL" dans  "sudo nano visudo"
 
 
+# -------------------------------------------------------------------------------
 # Variables
+$fichierListeEtudiants = "IPEtudiants-Test.csv"
 $remoteUser ="prof" #"utilisateur" #
 $password = "frop"#"didalab" #
 #$privateKeyPath = "C:\Path\To\Your\PrivateKey"
@@ -15,6 +17,41 @@ $intervalSeconds = 10  # Intervalle entre chaque itération en secondes
 
 # Liste VM
 $VM = @()
+
+# -------------------------------------------------------------------------------
+# Affichage tableau
+function Show-SplitTable {
+    param (
+        [Parameter(Mandatory = $true)] [array]$data,
+        [int]$columnsPerTable = 3
+    )
+      if (-not [Console]::IsOutputRedirected) {
+        try {
+            $windowWidth = [Console]::WindowWidth
+        } catch {
+                $windowWidth = 80  # Valeur par défaut ou ce que tu veux
+        }
+       } else {
+         $windowWidth = 80  # Fallback pour les environnements sans console
+      }
+
+    #Write-Host "Largeur de la fenêtre : $windowWidth"
+
+
+    $colNames = $data[0].PSObject.Properties.Name  # Récupère les noms des colonnes
+    $firstCol = $colNames[1]  # Garder la colonne 2
+    $otherCols = $colNames[2..($colNames.Count - 1)]  # Toutes les autres colonnes
+
+    for ($i = 0; $i -lt $otherCols.Count; $i += $columnsPerTable) {
+        $part = $otherCols[$i..([math]::Min($i + $columnsPerTable - 1, $otherCols.Count - 1))]
+
+        # Toujours inclure la colonne 2
+        $selectedCols = @($firstCol) + $part  
+
+        $data | Select-Object $selectedCols | Format-Table -Property * -AutoSize #| Format-Table -AutoSize |  Out-String -Width $windowWidth
+    }
+}
+
 
 clear
 Write-Host "               Controle LINUX" -ForegroundColor Cyan
@@ -28,6 +65,7 @@ Write-Host "               Controle LINUX" -ForegroundColor Cyan
 #$FilteredPaths = $CurrentPaths | Where-Object {$_ -notmatch "OneDrive"}
 # Réappliquer les nouveaux chemins sans OneDrive
 #$env:PSModulePath = $FilteredPaths -join ";"
+
 
 # Vérifier si le module Posh-SSH est installé
 if (-not (Get-Module -ListAvailable -Name Posh-SSH)) {
@@ -62,7 +100,7 @@ Write-Host "✅ Module Posh-SSH chargé avec succès." -ForegroundColor Green
 # Lire le fichier CSV des machines et étudiants
 # Récupérer le dossier où se trouve le script
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$csvPath = Join-Path $scriptPath "IPEtudiants.csv"
+$csvPath = Join-Path $scriptPath $fichierListeEtudiants
 
 # Vérifier si le fichier existe
 if (-Not (Test-Path $csvPath)) {
@@ -251,7 +289,7 @@ while ($true) {
      if ($VM[$i].ping)
      {
        if ($VM[$i].connect.Connected)
-        {
+       {
 
         Write-Host "Executing tests on host: $($VM[$i].connect.Host) $($VM[$i].nom)"
 
@@ -271,12 +309,7 @@ while ($true) {
             $VM[$i].$columnName=$matchValue
             if ($matchValue) {$note++}
         }  
-
-        $VM[$i].NOTE=$note
-        
-
-
-
+      $VM[$i].NOTE=$note  
       }
       else
       {
@@ -287,34 +320,12 @@ while ($true) {
     {
             Reconnect -vm $VM -i $i
     }
-
-}
+  }
 
     # Afficher les résultats sous forme de tableau
-    clear
+    #clear
  
-function Show-SplitTable {
-    param (
-        [Parameter(Mandatory = $true)] [array]$data,
-        [int]$columnsPerTable = 3
-    )
-  $windowWidth = [System.Console]::WindowWidth
-Write-Host "Largeur de la fenêtre : $windowWidth"
 
-
-    $colNames = $data[0].PSObject.Properties.Name  # Récupère les noms des colonnes
-    $firstCol = $colNames[1]  # Garder la colonne 2
-    $otherCols = $colNames[2..($colNames.Count - 1)]  # Toutes les autres colonnes
-
-    for ($i = 0; $i -lt $otherCols.Count; $i += $columnsPerTable) {
-        $part = $otherCols[$i..([math]::Min($i + $columnsPerTable - 1, $otherCols.Count - 1))]
-
-        # Toujours inclure la colonne 2
-        $selectedCols = @($firstCol) + $part  
-
-        $data | Select-Object $selectedCols | Format-Table -Property * -AutoSize #| Format-Table -AutoSize |  Out-String -Width $windowWidth
-    }
-}
 
     # Afficher les résultats
     Show-SplitTable -data $VM -columnsPerTable 12
