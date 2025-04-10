@@ -5,7 +5,7 @@
 
 # -------------------------------------------------------------------------------
 # Variables
-$fichierListeEtudiants = "IPEtudiants-Test.csv"
+$fichierListeEtudiants = "IPEtudiants-Test.csv" #<-------------------------------
 $remoteUser ="prof" #"utilisateur" #
 $password = "frop"#"didalab" #
 #$privateKeyPath = "C:\Path\To\Your\PrivateKey"
@@ -53,6 +53,8 @@ function Show-SplitTable {
 }
 
 
+# -------------------------------------------------------------------------------
+# Début affichage
 clear
 Write-Host "               Controle LINUX" -ForegroundColor Cyan
 
@@ -67,6 +69,7 @@ Write-Host "               Controle LINUX" -ForegroundColor Cyan
 #$env:PSModulePath = $FilteredPaths -join ";"
 
 
+# -------------------------------------------------------------------------------
 # Vérifier si le module Posh-SSH est installé
 if (-not (Get-Module -ListAvailable -Name Posh-SSH)) {
     Write-Host "❌ Le module Posh-SSH n'est pas installé. Installation en cours..." -ForegroundColor Yellow
@@ -96,7 +99,7 @@ Write-Host "✅ Module Posh-SSH chargé avec succès." -ForegroundColor Green
 
 
 
-
+# -------------------------------------------------------------------------------
 # Lire le fichier CSV des machines et étudiants
 # Récupérer le dossier où se trouve le script
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -134,7 +137,7 @@ foreach ($item in $VM) {
 
 
 
-
+# -------------------------------------------------------------------------------
 # Lire le fichier CSV des controles
 # Récupérer le dossier où se trouve le script
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -168,6 +171,8 @@ foreach ($row in $data) {
 
 }
 
+
+# -------------------------------------------------------------------------------
 #Effacer les clés des sessions enregistrées sur les Ip
 $jobs = @()
 foreach ($item in $VM) {
@@ -175,7 +180,7 @@ foreach ($item in $VM) {
     Remove-SSHTrustedHost -HostName $item.iP
 }
 
-
+# -------------------------------------------------------------------------------
 #Test initial de connectivité PING
 $jobs = @()
 foreach ($item in $VM) {
@@ -196,10 +201,9 @@ for ($i = 0; $i -lt $VM.Count; $i++) {
 # Nettoyage des jobs
 $jobs | Remove-Job
 
-
 $VM | Format-Table -AutoSize 
 
-
+# -------------------------------------------------------------------------------
 #Ouverture des sessions
 Write-Host "Ouverture des sessions"
 # Ouvrir toutes les sessions SSH 
@@ -225,7 +229,8 @@ Write-Host ""
 
 $VM | Format-Table -AutoSize 
 
-# Fonction pour tenter de joindre et connecté la VM 
+# -------------------------------------------------------------------------------
+# Fonction pour tenter de rejoindre et reconnecter une VM qui se serait deconnectée 
 function Reconnect {
     param (
         [array]$vm, $i
@@ -250,6 +255,7 @@ function Reconnect {
     }
  }
 
+# -------------------------------------------------------------------------------
 # Fonction pour exécuter les tests sur une session
 function Execute-Tests {
     param (
@@ -281,6 +287,8 @@ function Execute-Tests {
     return $results
 }
 
+
+# -------------------------------------------------------------------------------
 # Boucle pour répéter les tests périodiquement
 while ($true) {
 
@@ -322,12 +330,9 @@ while ($true) {
     }
   }
 
-    # Afficher les résultats sous forme de tableau
     #clear
- 
 
-
-    # Afficher les résultats
+    # Afficher les résultats sous forme de tableau
     Show-SplitTable -data $VM -columnsPerTable 12
 
     # Sauvegarde des résultats
@@ -347,9 +352,6 @@ while ($true) {
 
 
 
-
-# Fermer toutes les sessions SSH
+# -------------------------------------------------------------------------------
+# Fermer toutes les sessions SSH. Ne pass par la !
 $sshSessions | ForEach-Object { Remove-SSHSession -SSHSession $_ }
-
-
-
